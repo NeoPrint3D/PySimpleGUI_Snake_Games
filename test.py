@@ -1,37 +1,41 @@
 import PySimpleGUI as sg
 import random as rad
-import re
-import numpy as np
+from collections import namedtuple
 def high_scores():
     score=rad.randint(1,10)
-    a=sg.PopupGetText('Name')+': '+str(score)
-    f=open('scores/high_score', 'a+')
-    f.write('\n'+a)
+    a=sg.PopupGetText('Name')+':'+str(score)
+    f=open('scores/high_score', 'a')
+    f.write(a+'\n')
     f.close()
     print(a)
 def score_log():
-    layout = [[sg.Text('',key='-0-')], [sg.Text('',key='-1-')], [sg.Text('',key='-2-')]]
+    layout = [[sg.Text(size=(6,0),key='0')], [sg.Text(size=(6,0),key='1')], [sg.Text(size=(6,0),key='2')]]
     window=sg.Window('hi',layout)
-    score_value=[]
+    things=[]
     f = open('scores/high_score', 'r')
     if f.mode=='r':
         contents=f.read()
         cool=list(contents.split('\n'))
-        print(cool)
-        for i in range(len(cool)+1):
-            name,value= str(cool[i]).split(': ')
-            person = str(value+": "+name)
-            score_value.append(person)
-        score_value.sort()
-        score_value.reverse()
-        a=score_value
-        if len(score_value)>=3:
-            print(a[0:3])
-        print(a)
+        f.close()
+        cool.pop(len(cool)-1)
+        scores = namedtuple('scores', 'name score')
+        for i in range(len(cool)):
+            name, value=str(cool[i-1]).split(':')
+            person=scores(name, int(value))
+            things.append(person)
+        final=sorted(things, key=lambda x: getattr(x, 'name'), reverse=True)
+        tok=1
+        print(name)
+        print(final)
         while True:
             window.read(20)
-            window['-'+str(1)+'-'].update(a[1].split(':'))
-
-    f.close()
-high_scores()
+            if tok==1:
+                for i in range(3):
+                    new=final[i]
+                    print(new)
+                    name3, value3=new.name,new.score
+                    print(name3)
+                    print(value3)
+                    window[str(i)].update(str(name3)+': '+str(value3))
+                tok=0
 score_log()

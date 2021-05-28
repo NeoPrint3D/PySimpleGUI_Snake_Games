@@ -29,11 +29,9 @@ def main():
         f.write(str(a)+'\n')
         f.close()
     import PySimpleGUI as sg
-    import keyboard as kb
     import random as r
     import time
     sg.theme('DarkPurple6')
-    score = 0
     grid_size = 20
     snake = []
     head = []
@@ -51,9 +49,16 @@ def main():
             for column in range(grid_size))
     top3 = ([sg.Text(' ', key=f'{i}-', font=('Bold', 15), justification='center', size=(10, 2))] for i in range(3))
 
+    controlpanel=[[sg.B('⇧',size=(2,0) ,font=('arial',20),key='up')],
+                  [sg.B('⇦',size=(2,0), font=('arial',20), key='left'),sg.B('⇨',size=(2,0), font=('arial',20), key='right')],
+                  [sg.B('⇩',size=(2,0), font=('arial',20), key='down')]
+                  ]
+
     leaderboard = [[sg.Text('Score', justification='center', size=(20, 0))],
                    [score_temp],
-                   [sg.Column(top3)]]
+                   [sg.Column(top3)],
+                   [sg.Frame('hi',controlpanel,element_justification='center')]
+                   ]
 
     layout = [[body], [sg.Frame('game', grid),
                        sg.Frame('Stats', leaderboard, font=('Bolded', 15), border_width=10, size=(300, 750),
@@ -64,23 +69,23 @@ def main():
     leader_board_scores()
     window[food].update(button_color=('green', 'green'))
     while True:
-        window.read(20)
+        event, value = window.read(20)
         if x >= grid_size or x < 0 or y < 0 or y >= grid_size:
             high_scores(score)
             break
         else:
-            if kb.is_pressed('d') and cx != -1:
-                cx = 1
-                cy = 0
-            if kb.is_pressed('a') and cx != 1:
-                cx = -1
-                cy = 0
-            if kb.is_pressed('w') and cy != 1:
+            if event == 'up' and event != 'down':
                 cx = 0
                 cy = -1
-            if kb.is_pressed('s') and cy != -1:
+            if event == 'down' and event != 'up':
                 cx = 0
                 cy = 1
+            if event == 'left' and event != 'right':
+                cx = -1
+                cy = 0
+            if event == 'right' and event != 'left':
+                cx = 1
+                cy = 0
             oldx, oldy = x, y
             x, y = x + cx, y + cy
             if x != oldx or y != oldy:

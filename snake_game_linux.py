@@ -24,7 +24,7 @@ def main():
 
     def high_scores(score):
         import PySimpleGUI as sg
-        a = sg.PopupGetText('Name') + ':' + str(score)
+        a = sg.PopupGetText('Name') + ':' + 'f{score}'
         f = open('scores/high_score', 'a')
         f.write(str(a)+'\n')
         f.close()
@@ -32,7 +32,7 @@ def main():
     import random as r
     import time
     sg.theme('DarkPurple6')
-    grid_size = 20
+    grid_size = 25
     snake = []
     head = []
     colors = ['red', 'blue', 'orange']
@@ -41,11 +41,12 @@ def main():
     food = (10, 10)
     cx, cy = 0, 0
     segments = 3
-    score_temp = sg.T(str(score), key='-score-', size=(30, 2), justification='center', font=('arial', 20),
+    score_temp = sg.T(str(score), key='-score-', size=(20, 2), justification='center',
+                      font=('arial', 10),
                       text_color='white')
     body = sg.Text('Snake', font=('arial', 20), justification='center', size=(60, 0))
 
-    grid = ([sg.Button(key=(row, column), size=(2, 1), button_color=('white', 'black')) for row in range(grid_size)]
+    grid = ([sg.Button(key=(row, column), size=(0, 0), button_color=('white', 'black')) for row in range(grid_size)]
             for column in range(grid_size))
     top3 = ([sg.Text(' ', key=f'{i}-', font=('Bold', 15), justification='center', size=(10, 2))] for i in range(3))
 
@@ -60,16 +61,16 @@ def main():
                    [sg.Frame('hi',controlpanel,element_justification='center')]
                    ]
 
-    layout = [[body], [sg.Frame('game', grid),
-                       sg.Frame('Stats', leaderboard, font=('Bolded', 15), border_width=10, size=(300, 750),
-                                element_justification='center', vertical_alignment='top-center',
+    layout = [[body], [sg.Frame('game', grid, size=(300,200)),
+sg.Frame('Stats', leaderboard, font=('Bolded', 15), border_width=10, size=(200, 750),
+            element_justification='center', vertical_alignment='top-center',
                                 background_color='DarkBlue')]]
 
-    window = sg.Window('hi', layout, finalize=True, size=(900, 750))
+    window = sg.Window('hi', layout, finalize=True, size=(1600, 800))
     leader_board_scores()
     window[food].update(button_color=('green', 'green'))
     while True:
-        event, value = window.read(20)
+        event, value = window.read(50)
         if x >= grid_size or x < 0 or y < 0 or y >= grid_size:
             high_scores(score)
             break
